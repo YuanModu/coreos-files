@@ -1,0 +1,11 @@
+*bak
+certs/gocode/
+certs/*@*@*/
+client
+server
+peer
+ssh
+upload
+*.pem
+*.csr
+iplist.txt
