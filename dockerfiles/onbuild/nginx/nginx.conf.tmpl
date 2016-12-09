@@ -1,0 +1,86 @@
+user                    nginx;
+worker_processes        {{getv "/services/nginx/worker_processes"}};
+
+error_log               /var/log/nginx/error.log warn;
+pid                     /var/run/nginx.pid;
+
+events {
+    worker_connections  {{getv "/services/nginx/worker_connections"}};
+}
+
+
+http {
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    log_format  main    '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log          /var/log/nginx/access.log  main;
+
+
+    sendfile            {{getv "/services/nginx/sendfile"}};
+    tcp_nopush          {{getv "/services/nginx/tcp_nopush"}};
+
+    keepalive_timeout   {{getv "/services/nginx/keepalive_timeout"}};
+    tcp_nodelay         {{getv "/services/nginx/tcp_nodelay"}};
+
+    gzip                {{getv "/services/nginx/gzip"}};
+
+    ssl_protocols                           TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers               on;
+    ssl_ciphers                             AES256+EECDH:AES256+EDH:!aNULL;
+
+    {{range $server := getvs "/services/nginx/servers/*"}}
+        {{range $dir := lsdir "/services/uwsgi"}}{{$server_key := printf "/services/uwsgi/%s/server" $dir}}{{$server_value := getv $server_key}}
+        {{if eq $server $server_value }}{{$ip_key := printf "/services/uwsgi/%s/ip" $dir}}
+    upstream {{$server}} {
+    	server                              {{getv $ip_key}}:8000;
+    }
+        {{end}}
+        {{end}}
+
+    server {
+        listen                              80 default_server;
+        server_name                         {{$server}} www.{{$server}};
+        return 301                          https://www.{{$server}}$request_uri;
+    }
+
+    server {
+        listen                              443 ssl default_server;
+        server_name                         {{$server}};
+
+        ssl_certificate                     /etc/letsencrypt/live/{{$server}}/fullchain.pem;
+        ssl_certificate_key                 /etc/letsencrypt/live/{{$server}}/privkey.pem;
+
+        return 301                          https://www.{{$server}}$request_uri;
+    }
+
+    server {
+        listen                              443 ssl;
+        server_name                         www.{{$server}};
+
+        ssl_certificate                     /etc/letsencrypt/live/{{$server}}/fullchain.pem;
+        ssl_certificate_key                 /etc/letsencrypt/live/{{$server}}/privkey.pem;
+
+        location ~ /.well-known {
+            alias                           /var/www/{{$server}}/.well-known;
+        }
+
+        location /static {
+            alias                           /var/www/{{$server}}/static;
+        }
+
+        location / {
+            uwsgi_ssl_certificate           /etc/nginx/ssl/peer.pem;
+            uwsgi_ssl_certificate_key       /etc/nginx/ssl/peer-key.pem;
+            uwsgi_ssl_trusted_certificate   /etc/nginx/ssl/ca.pem;
+            uwsgi_ssl_name                  ${COREOS_HOSTNAME};
+            uwsgi_ssl_verify                on;
+            uwsgi_pass                      suwsgi://{{$server}};
+            include                         uwsgi_params;
+        }
+    }
+    {{end}}
+}

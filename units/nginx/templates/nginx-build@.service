@@ -1,0 +1,32 @@
+[Unit]
+Description=Nginx web server proxying uwsgi backends %i: build docker image
+
+Requires=docker.service
+
+After=docker.service
+BindsTo=nginx@%i.service
+
+[Service]
+Type=oneshot
+
+User=core
+Group=core
+
+RemainAfterExit=yes
+
+TimeoutStartSec=0
+
+ExecStart=/bin/bash -c '\
+    set -e -o pipefail; \
+    DIR=$(mktemp -d); \
+    git clone https://github.com/YuanModu/coreos-files.git $DIR; \
+    sudo install -o core -g core \
+        /etc/etcd/ssl/{ca,client,client-key,peer,peer-key}.pem $DIR/dockerfiles/build/nginx; \
+    docker build -t yuanmodu/nginx $DIR/dockerfiles/build/nginx || rm -r $DIR; \
+    rm -r -f $DIR'
+
+ExecStop=/bin/bash -c '\
+    docker rmi yuanmodu/nginx || true'
+
+[X-Fleet]
+MachineOf=nginx@%i.service
