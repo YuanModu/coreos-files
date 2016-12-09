@@ -1,0 +1,40 @@
+[Unit]
+Description=PostgreSQL database server %i
+
+Requires=docker.service
+Requires=postgres-build@%i.service
+Requires=postgres-discovery@%i.service
+
+After=docker.service
+After=postgres-build@%i.service
+After=postgres-discovery@%i.service
+
+[Service]
+Type=simple
+
+User=core
+Group=core
+
+TimeoutStartSec=0
+
+KillMode=none
+
+EnvironmentFile=/etc/environment
+
+ExecStartPre=-/usr/bin/docker stop postgres
+ExecStartPre=-/usr/bin/docker rm -v -f postgres
+ExecStartPre=/usr/bin/docker create \
+    --name postgres \
+    --env COREOS_HOSTNAME=%H \
+    --volume /mnt/postgres/data:/var/lib/postgresql/data \
+    -p ${COREOS_PRIVATE_IPV4}:5432:5432 \
+    yuanmodu/postgres
+ExecStart=/usr/bin/docker start -a postgres
+
+ExecStop=/usr/bin/docker stop postgres
+ExecStopPost=/usr/bin/docker rm -v -f postgres
+
+[X-Fleet]
+Conflicts=nginx@*.service
+Conflicts=uwsgi@*.service
+Conflicts=postgres@*.service
