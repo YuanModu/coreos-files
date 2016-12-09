@@ -1,0 +1,33 @@
+[Unit]
+Description=PostgreSQL database server %i: etcd registration
+
+Requires=etcd2.service
+
+After=etcd2.service
+BindsTo=postgres@%i.service
+
+[Service]
+Type=oneshot
+
+User=etcd
+Group=etcd
+
+RemainAfterExit=yes
+
+EnvironmentFile=/etc/environment
+
+Environment='ETCDCTL_OPTS=\
+    --endpoint https://127.0.0.1:2379 \
+    --cert-file /etc/etcd/ssl/client.pem \
+    --key-file /etc/etcd/ssl/client-key.pem \
+    --ca-file /etc/etcd/ssl/ca.pem'
+
+ExecStart=/bin/bash -c '{ \
+    set -e -o pipefail; \
+    etcdctl $ETCDCTL_OPTS set /services/postgres/%i/ip ${COREOS_PRIVATE_IPV4}; \
+} > /dev/null'
+
+ExecStop=/bin/bash -c 'etcdctl $ETCDCTL_OPTS rm /services/postgres --recursive'
+
+[X-Fleet]
+MachineOf=postgres@%i.service
