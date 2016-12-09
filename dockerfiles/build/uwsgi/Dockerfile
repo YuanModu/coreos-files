@@ -1,0 +1,1 @@
+FROM yuanmodu/uwsgi:onbuild

@@ -1,0 +1,41 @@
+[Unit]
+Description=uWSGI server %i
+
+Requires=docker.service
+Requires=uwsgi-build@%i.service
+Requires=uwsgi-discovery@%i.service
+
+After=docker.service
+After=uwsgi-build@%i.service
+After=uwsgi-discovery@%i.service
+
+[Service]
+Type=simple
+
+User=core
+Group=core
+
+TimeoutStartSec=0
+
+KillMode=none
+
+EnvironmentFile=/etc/environment
+
+ExecStartPre=-/usr/bin/docker stop wagtail
+ExecStartPre=-/usr/bin/docker rm -v -f wagtail
+ExecStartPre=/usr/bin/docker create \
+    --name wagtail \
+    --env INSTANCE=%i \
+    --volume /mnt/uwsgi:/usr/share/webapp:ro \
+    -p ${COREOS_PRIVATE_IPV4}:8000:8000 \
+    -p ${COREOS_PRIVATE_IPV4}:5432:5432 \
+    yuanmodu/wagtail
+ExecStart=/usr/bin/docker start -a wagtail
+
+ExecStop=/usr/bin/docker stop wagtail
+ExecStopPost=/usr/bin/docker rm -v wagtail
+
+[X-Fleet]
+Conflicts=nginx.service
+Conflicts=uwsgi@*.service
+Conflicts=postgres@*.service

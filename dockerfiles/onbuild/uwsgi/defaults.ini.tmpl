@@ -1,0 +1,19 @@
+[uwsgi]
+pythonpath= /usr/share/webapp
+module = webapp.wsgi:application
+suwsgi-socket = 0.0.0.0:8000,/etc/uwsgi/ssl/peer.pem,/etc/uwsgi/ssl/peer-key.pem,HIGH,!/etc/uwsgi/ssl/ca.pem
+stats = 127.0.0.1:8001
+uid = uwsgi
+guid = uwsgi
+die-on-term = true
+pidfile = /var/run/uwsgi.pid
+master = {{getv "/services/uwsgi/${INSTANCE}/master"}}
+vacuum = {{getv "/services/uwsgi/${INSTANCE}/vacuum"}}
+thunder-lock = {{getv "/services/uwsgi/${INSTANCE}/thunder-lock"}}
+processes = {{getv "/services/uwsgi/${INSTANCE}/processes"}}
+threads = {{getv "/services/uwsgi/${INSTANCE}/threads"}}
+harakiri = {{getv "/services/uwsgi/${INSTANCE}/harakiri"}}
+max-requests = {{getv "/services/uwsgi/${INSTANCE}/max-requests"}}
+post-buffering = {{getv "/services/uwsgi/${INSTANCE}/post-buffering"}}
+offload-threads = {{getv "/services/uwsgi/${INSTANCE}/offload-threads"}}
+memory-report = {{getv "/services/uwsgi/${INSTANCE}/memory-report"}}

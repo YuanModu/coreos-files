@@ -1,0 +1,45 @@
+[Unit]
+Description=uWSGI server %i: etcd registration
+
+Requires=etcd2.service
+
+After=etcd2.service
+BindsTo=uwsgi@%i.service
+
+[Service]
+Type=oneshot
+
+User=etcd
+Group=etcd
+
+RemainAfterExit=yes
+
+EnvironmentFile=/etc/environment
+
+Environment='ETCDCTL_OPTS=\
+    --endpoint https://127.0.0.1:2379 \
+    --cert-file /etc/etcd/ssl/client.pem \
+    --key-file /etc/etcd/ssl/client-key.pem \
+    --ca-file /etc/etcd/ssl/ca.pem'
+
+ExecStart=/bin/bash -c '{ \
+    set -e -o pipefail; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/server example.com; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/db example.com; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/ip ${COREOS_PRIVATE_IPV4}; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/master true; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/vacuum false; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/thunder-lock true; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/processes 2; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/threads 2; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/harakiri 20; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/max-requests 5000; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/post-buffering 0; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/offload-threads 0; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/memory-report true; \
+    } > /dev/null'
+
+ExecStop=/bin/bash -c 'etcdctl $ETCDCTL_OPTS rm /services/uwsgi/%i --recursive'
+
+[X-Fleet]
+MachineOf=uwsgi@%i.service
