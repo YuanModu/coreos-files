@@ -1,0 +1,87 @@
+#cloud-config
+
+coreos:
+  etcd2:
+    discovery: https://discovery.etcd.io/<token>
+    advertise-client-urls: https://$private_ipv4:2379
+    initial-advertise-peer-urls: https://$private_ipv4:2380
+    listen-client-urls: https://0.0.0.0:2379
+    listen-peer-urls: https://$private_ipv4:2380
+    cert-file: /etc/etcd/ssl/server.pem
+    key-file: /etc/etcd/ssl/server-key.pem
+    trusted-ca-file: /etc/etcd/ssl/ca.pem
+    client-cert-auth: true
+    peer-cert-file: /etc/etcd/ssl/peer.pem
+    peer-key-file: /etc/etcd/ssl/peer-key.pem
+    peer-trusted-ca-file: /etc/etcd/ssl/ca.pem
+    peer-client-cert-auth: true
+  fleet:
+    metadata: hostname=%H
+    etcd-servers: https://127.0.0.1:2379
+    public-ip: $private_ipv4
+    etcd-certfile: /etc/etcd/ssl/client.pem
+    etcd-keyfile: /etc/etcd/ssl/client-key.pem
+    etcd-cafile: /etc/etcd/ssl/ca.pem
+  locksmith:
+    endpoint: https://127.0.0.1:2379
+    etcd-certfile: /etc/etcd/ssl/client.pem
+    etcd-keyfile: /etc/etcd/ssl/client-key.pem
+    etcd-cafile: /etc/etcd/ssl/ca.pem
+  units:
+    - name: etcd2.service
+      command: start
+    - name: fleet.service
+      command: start
+    - name: iptables-private.target
+      content: |
+        [Unit]
+        Description=Group instantiated iptables-private services
+        Requires=iptables-restore.service
+
+        [Install]
+        WantedBy=multi-user.target
+      command: start
+    - name: iptables-private@.service
+      content: |
+        [Unit]
+        Description=Add iptables rule for the peers private IP
+        After=iptables-restore.service
+
+        [Service]
+        Type=oneshot
+        ExecStart=/sbin/iptables -w -A PRIVATE -p tcp -s %i -j ACCEPT
+
+        [Install]
+        WantedBy=iptables-private.target
+write_files:
+  - path: /var/lib/iptables/rules-save
+    permissions: 0644
+    owner: root:root
+    content: |
+      *filter
+      :INPUT ACCEPT [0:0]
+      :FORWARD DROP [0:0]
+      :OUTPUT ACCEPT [0:0]
+      -N PRIVATE
+      -N PUBLIC
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -i eth0 -m conntrack --ctstate NEW -j PUBLIC
+      -A INPUT -i eth0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -i eth1 -j PRIVATE
+      -A INPUT -i docker0 -j ACCEPT
+      -A INPUT -j DROP
+      -A PUBLIC -p tcp -m tcp --dport 22 -j ACCEPT
+      COMMIT
+  - path: /etc/ssh/sshd_config
+    permissions: 0600
+    owner: root:root
+    content: |
+      # Use most defaults for sshd configuration.
+      UsePrivilegeSeparation sandbox
+      Subsystem sftp internal-sftp
+      ClientAliveInterval 180
+      UseDNS no
+
+      PasswordAuthentication no
+      ChallengeResponseAuthentication no
+...
