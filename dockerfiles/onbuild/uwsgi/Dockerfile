@@ -14,23 +14,35 @@ RUN apt-get update && \
 
 RUN pip install --no-cache-dir uwsgi
 
-RUN mkdir -p /etc/confd/conf.d && \
-    mkdir -p /etc/confd/templates && \
-    mkdir -p /etc/confd/ssl && \
-    mkdir -p /etc/uwsgi/ssl
+ENV SSLDIR /usr/share/ssl/certs
+ENV UWSGISSL /etc/uwsgi/ssl
+ENV CONFDSSL /etc/confd/ssl
+
+RUN mkdir -p $SSLDIR && \
+    mkdir -p $UWSGISSL && \
+    mkdir -p $CONFDSSL && \
+    mkdir -p /etc/confd/conf.d && \
+    mkdir -p /etc/confd/templates
+
+RUN ln -s $SSLDIR/ca.pem $CONFDSSL/ && \
+    ln -s $SSLDIR/client.pem $CONFDSSL/ && \
+    ln -s $SSLDIR/client-key.pem $CONFDSSL/ && \
+    ln -s $SSLDIR/ca.pem $UWSGISSL/ && \
+    ln -s $SSLDIR/server.pem $UWSGISSL/ && \
+    ln -s $SSLDIR/server-key.pem $UWSGISSL/
 
 COPY defaults.ini.toml /etc/confd/conf.d/
 COPY defaults.ini.tmpl /etc/confd/templates/
 
-ONBUILD COPY ca.pem /etc/confd/ssl/
-ONBUILD COPY client.pem /etc/confd/ssl/
-ONBUILD COPY client-key.pem /etc/confd/ssl/
-ONBUILD RUN chmod 0400 /etc/confd/ssl/client-key.pem
+ONBUILD COPY ca.pem $SSLDIR
+ONBUILD COPY client.pem $SSLDIR
+ONBUILD COPY client-key.pem $SSLDIR
+ONBUILD RUN chmod 0400 $SSLDIR/client-key.pem
 
-ONBUILD COPY ca.pem /etc/uwsgi/ssl/
-ONBUILD COPY peer.pem /etc/uwsgi/ssl/
-ONBUILD COPY peer-key.pem /etc/uwsgi/ssl/
-ONBUILD RUN chmod 0400 /etc/uwsgi/ssl/peer-key.pem
+ONBUILD COPY ca.pem $SSLDIR
+ONBUILD COPY server.pem $SSLDIR
+ONBUILD COPY server-key.pem $SSLDIR
+ONBUILD RUN chmod 0400 $SSLDIR/server-key.pem
 
 RUN mkdir -p ${WEBAPP_ROOT} && chown -R uwsgi:uwsgi ${WEBAPP_ROOT}
 WORKDIR ${WEBAPP_ROOT}
