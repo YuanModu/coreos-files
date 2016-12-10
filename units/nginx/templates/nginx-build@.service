@@ -21,7 +21,7 @@ ExecStart=/bin/bash -c '\
     DIR=$(mktemp -d); \
     git clone https://github.com/YuanModu/coreos-files.git $DIR; \
     sudo install -o core -g core \
-        /etc/etcd/ssl/{ca,client,client-key,peer,peer-key}.pem $DIR/dockerfiles/build/nginx; \
+        /etc/etcd/ssl/{ca,client,client-key}.pem $DIR/dockerfiles/build/nginx; \
     docker build -t yuanmodu/nginx $DIR/dockerfiles/build/nginx || rm -r $DIR; \
     rm -r -f $DIR'
 

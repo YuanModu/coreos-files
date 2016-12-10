@@ -73,11 +73,9 @@ http {
         }
 
         location / {
-            uwsgi_ssl_certificate           /etc/nginx/ssl/peer.pem;
-            uwsgi_ssl_certificate_key       /etc/nginx/ssl/peer-key.pem;
+            uwsgi_ssl_certificate           /etc/nginx/ssl/client.pem;
+            uwsgi_ssl_certificate_key       /etc/nginx/ssl/client-key.pem;
             uwsgi_ssl_trusted_certificate   /etc/nginx/ssl/ca.pem;
-            uwsgi_ssl_name                  ${COREOS_HOSTNAME};
-            uwsgi_ssl_verify                on;
             uwsgi_pass                      suwsgi://{{$server}};
             include                         uwsgi_params;
         }

@@ -30,6 +30,7 @@ ExecStartPre=/usr/bin/docker create \
     --volume /mnt/nginx/staticfiles:/var/www \
     -p ${COREOS_PUBLIC_IPV4}:80:80 \
     -p ${COREOS_PUBLIC_IPV4}:443:443 \
+    -p ${COREOS_PRIVATE_IPV4}:8000:8000 \
     yuanmodu/nginx
 ExecStart=/usr/bin/docker start -a nginx
 
