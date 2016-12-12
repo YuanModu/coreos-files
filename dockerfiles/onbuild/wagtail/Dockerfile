@@ -1,4 +1,4 @@
-FROM python
+FROM debian
 
 ENV CONFD_VERSION 0.11.0
 ENV WEBAPP_ROOT /usr/share/webapp
@@ -33,4 +33,4 @@ COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["uwsgi"]
+CMD ["confd"]
