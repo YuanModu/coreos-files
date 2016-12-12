@@ -43,8 +43,8 @@ ONBUILD RUN chmod 0400 $SSL_ROOT/client-key.pem
 ONBUILD RUN chmod 0400 $SSL_ROOT/server-key.pem
 
 
-RUN mkdir -p ${WEBAPP_ROOT} && \
-    touch ${WEBAPP_ROOT}/touch-reload
+RUN mkdir -p ${WEBAPP_ROOT}
+RUN touch ${WEBAPP_ROOT}/touch-reload
 VOLUME ${WEBAPP_ROOT}
 WORKDIR ${WEBAPP_ROOT}
 
