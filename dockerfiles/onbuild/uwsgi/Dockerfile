@@ -14,13 +14,11 @@ RUN apt-get update && \
 
 RUN pip install --no-cache-dir uwsgi
 
-ENV SSL_ROOT /etc/ssl/self-signed
 ENV SSL_CONFD /etc/confd/ssl
 ENV SSL_UWSGI /etc/uwsgi/ssl
 
-RUN mkdir -p $SSL_ROOT && \
+RUN mkdir -p $SSL_CONFD && \
     mkdir -p $SSL_UWSGI && \
-    mkdir -p $SSL_CONFD && \
     mkdir -p /etc/confd/conf.d && \
     mkdir -p /etc/confd/templates
 
