@@ -19,10 +19,10 @@ RUN mkdir -p $SSL_CONFD && \
 COPY base.py.toml /etc/confd/conf.d/
 COPY base.py.tmpl /etc/confd/templates/
 
-ONBUILD COPY ca.pem $SSLDIR
-ONBUILD COPY client.pem $SSLDIR
-ONBUILD COPY client-key.pem $SSLDIR
-ONBUILD RUN chmod 0400 $SSLDIR/client-key.pem
+ONBUILD COPY ca.pem $SSL_CONFD
+ONBUILD COPY client.pem $SSL_CONFD
+ONBUILD COPY client-key.pem $SSL_CONFD
+ONBUILD RUN chmod 0400 $SSL_CONFD/client-key.pem
 
 RUN mkdir -p ${WEBAPP_ROOT}
 RUN touch ${WEBAPP_ROOT}/touch-reload
