@@ -14,33 +14,33 @@ RUN apt-get update && \
 
 RUN pip install --no-cache-dir uwsgi
 
-ENV SSLDIR /etc/ssl/self-signed
-ENV UWSGISSL /etc/uwsgi/ssl
-ENV CONFDSSL /etc/confd/ssl
+ENV SSL_ROOT /etc/ssl/self-signed
+ENV SSL_CONFD /etc/confd/ssl
+ENV SSL_UWSGI /etc/uwsgi/ssl
 
-RUN mkdir -p $SSLDIR && \
-    mkdir -p $UWSGISSL && \
-    mkdir -p $CONFDSSL && \
+RUN mkdir -p $SSL_ROOT && \
+    mkdir -p $SSL_UWSGI && \
+    mkdir -p $SSL_CONFD && \
     mkdir -p /etc/confd/conf.d && \
     mkdir -p /etc/confd/templates
 
-RUN ln -s $SSLDIR/ca.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/client.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/client-key.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/ca.pem $UWSGISSL/ && \
-    ln -s $SSLDIR/server.pem $UWSGISSL/ && \
-    ln -s $SSLDIR/server-key.pem $UWSGISSL/
+RUN ln -s $SSL_ROOT/ca.pem $SSL_CONFD/ && \
+    ln -s $SSL_ROOT/client.pem $SSL_CONFD/ && \
+    ln -s $SSL_ROOT/client-key.pem $SSL_CONFD/ && \
+    ln -s $SSL_ROOT/ca.pem $SSL_UWSGI/ && \
+    ln -s $SSL_ROOT/server.pem $SSL_UWSGI/ && \
+    ln -s $SSL_ROOT/server-key.pem $SSL_UWSGI/
 
 COPY defaults.ini.toml /etc/confd/conf.d/
 COPY defaults.ini.tmpl /etc/confd/templates/
 
-ONBUILD COPY ca.pem $SSLDIR
-ONBUILD COPY client.pem $SSLDIR
-ONBUILD COPY client-key.pem $SSLDIR
-ONBUILD COPY server.pem $SSLDIR
-ONBUILD COPY server-key.pem $SSLDIR
-ONBUILD RUN chmod 0400 $SSLDIR/client-key.pem
-ONBUILD RUN chmod 0400 $SSLDIR/server-key.pem
+ONBUILD COPY ca.pem $SSL_ROOT
+ONBUILD COPY client.pem $SSL_ROOT
+ONBUILD COPY client-key.pem $SSL_ROOT
+ONBUILD COPY server.pem $SSL_ROOT
+ONBUILD COPY server-key.pem $SSL_ROOT
+ONBUILD RUN chmod 0400 $SSL_ROOT/client-key.pem
+ONBUILD RUN chmod 0400 $SSL_ROOT/server-key.pem
 
 VOLUME ${WEBAPP_ROOT}
 WORKDIR ${WEBAPP_ROOT}
