@@ -7,26 +7,26 @@ coreos:
     initial-advertise-peer-urls: https://$private_ipv4:2380
     listen-client-urls: https://0.0.0.0:2379
     listen-peer-urls: https://$private_ipv4:2380
-    cert-file: /etc/etcd/ssl/server.pem
-    key-file: /etc/etcd/ssl/server-key.pem
-    trusted-ca-file: /etc/etcd/ssl/ca.pem
+    cert-file: /usr/share/ssl/server.pem
+    key-file: /usr/share/ssl/server-key.pem
+    trusted-ca-file: /usr/share/ssl/ca.pem
     client-cert-auth: true
-    peer-cert-file: /etc/etcd/ssl/peer.pem
-    peer-key-file: /etc/etcd/ssl/peer-key.pem
-    peer-trusted-ca-file: /etc/etcd/ssl/ca.pem
+    peer-cert-file: /usr/share/ssl/peer.pem
+    peer-key-file: /usr/share/ssl/peer-key.pem
+    peer-trusted-ca-file: /usr/share/ssl/ca.pem
     peer-client-cert-auth: true
   fleet:
     metadata: hostname=%H
     etcd-servers: https://127.0.0.1:2379
     public-ip: $private_ipv4
-    etcd-certfile: /etc/etcd/ssl/client.pem
-    etcd-keyfile: /etc/etcd/ssl/client-key.pem
-    etcd-cafile: /etc/etcd/ssl/ca.pem
+    etcd-certfile: /usr/share/ssl/client.pem
+    etcd-keyfile: /usr/share/ssl/client-key.pem
+    etcd-cafile: /usr/share/ssl/ca.pem
   locksmith:
     endpoint: https://127.0.0.1:2379
-    etcd-certfile: /etc/etcd/ssl/client.pem
-    etcd-keyfile: /etc/etcd/ssl/client-key.pem
-    etcd-cafile: /etc/etcd/ssl/ca.pem
+    etcd-certfile: /usr/share/ssl/client.pem
+    etcd-keyfile: /usr/share/ssl/client-key.pem
+    etcd-cafile: /usr/share/ssl/ca.pem
   units:
     - name: etcd2.service
       command: start
