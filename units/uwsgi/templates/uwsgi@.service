@@ -21,8 +21,6 @@ KillMode=none
 
 EnvironmentFile=/etc/environment
 
-# TODO: Decide whether we can mount the coreos volume under an alternative variable mount point.
-
 ExecStartPre=-/usr/bin/docker rm -v -f uwsgi
 ExecStartPre=/usr/bin/docker create \
     --name uwsgi \
