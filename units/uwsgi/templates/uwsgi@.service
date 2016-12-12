@@ -27,7 +27,7 @@ ExecStartPre=-/usr/bin/docker rm -v -f uwsgi
 ExecStartPre=/usr/bin/docker create \
     --name uwsgi \
     --env INSTANCE=%i \
-    --volume /mnt/uwsgi-%i/webapp:/usr/share/webapp:ro \
+    --volume /mnt/uwsgi-%i/webapp:/usr/share/webapp \
     -p ${COREOS_PRIVATE_IPV4}:8000:8000 \
     -p ${COREOS_PRIVATE_IPV4}:5432:5432 \
     yuanmodu/uwsgi
