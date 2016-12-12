@@ -14,7 +14,7 @@ RUN apt-get update && \
 
 RUN pip install --no-cache-dir uwsgi
 
-ENV SSLDIR /usr/share/ssl/certs
+ENV SSLDIR /etc/ssl/self-signed
 ENV UWSGISSL /etc/uwsgi/ssl
 ENV CONFDSSL /etc/confd/ssl
 
@@ -37,14 +37,12 @@ COPY defaults.ini.tmpl /etc/confd/templates/
 ONBUILD COPY ca.pem $SSLDIR
 ONBUILD COPY client.pem $SSLDIR
 ONBUILD COPY client-key.pem $SSLDIR
-ONBUILD RUN chmod 0400 $SSLDIR/client-key.pem
-
-ONBUILD COPY ca.pem $SSLDIR
 ONBUILD COPY server.pem $SSLDIR
 ONBUILD COPY server-key.pem $SSLDIR
+ONBUILD RUN chmod 0400 $SSLDIR/client-key.pem
 ONBUILD RUN chmod 0400 $SSLDIR/server-key.pem
 
-RUN mkdir -p ${WEBAPP_ROOT} && chown -R uwsgi:uwsgi ${WEBAPP_ROOT}
+VOLUME ${WEBAPP_ROOT}
 WORKDIR ${WEBAPP_ROOT}
 
 COPY docker-entrypoint.sh /entrypoint.sh
@@ -52,4 +50,4 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 8000 5432
-CMD ["uwsgi", "--ini", "/etc/uwsgi/defaults.ini", "--pidfile", "/var/run/uwsgi.pid"]
+CMD ["uwsgi", "--ini", "/etc/uwsgi/defaults.ini"]
