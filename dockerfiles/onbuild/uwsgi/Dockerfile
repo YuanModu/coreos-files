@@ -24,25 +24,19 @@ RUN mkdir -p $SSL_ROOT && \
     mkdir -p /etc/confd/conf.d && \
     mkdir -p /etc/confd/templates
 
-RUN ln -s $SSL_ROOT/ca.pem $SSL_CONFD/ && \
-    ln -s $SSL_ROOT/client.pem $SSL_CONFD/ && \
-    ln -s $SSL_ROOT/client-key.pem $SSL_CONFD/ && \
-    ln -s $SSL_ROOT/ca.pem $SSL_UWSGI/ && \
-    ln -s $SSL_ROOT/server.pem $SSL_UWSGI/ && \
-    ln -s $SSL_ROOT/server-key.pem $SSL_UWSGI/
-
 COPY defaults.ini.toml /etc/confd/conf.d/
 COPY defaults.ini.tmpl /etc/confd/templates/
 
-ONBUILD COPY ca.pem $SSL_ROOT
-ONBUILD COPY client.pem $SSL_ROOT
-ONBUILD COPY client-key.pem $SSL_ROOT
-ONBUILD COPY server.pem $SSL_ROOT
-ONBUILD COPY server-key.pem $SSL_ROOT
-ONBUILD RUN chmod 0400 $SSL_ROOT/client-key.pem
-ONBUILD RUN chmod 0400 $SSL_ROOT/server-key.pem
+ONBUILD COPY ca.pem $SSL_CONFD/
+ONBUILD COPY client.pem $SSL_CONFD/
+ONBUILD COPY client-key.pem $SSL_CONFD/
 
+ONBUILD COPY ca.pem $SSL_UWSGI/
+ONBUILD COPY server.pem $SSL_UWSGI/
+ONBUILD COPY server-key.pem $SSL_UWSGI/
+ONBUILD RUN chown -R uwsgi:uwsgi $SSL_UWSGI/
 
+RUN touch ${WEBAPP_ROOT}/touch-reload
 VOLUME ${WEBAPP_ROOT}
 WORKDIR ${WEBAPP_ROOT}
 
