@@ -36,6 +36,7 @@ ONBUILD COPY server.pem $SSL_UWSGI/
 ONBUILD COPY server-key.pem $SSL_UWSGI/
 ONBUILD RUN chown -R uwsgi:uwsgi $SSL_UWSGI/
 
+RUN mkdir -p ${WEBAPP_ROOT}
 RUN touch ${WEBAPP_ROOT}/touch-reload
 VOLUME ${WEBAPP_ROOT}
 WORKDIR ${WEBAPP_ROOT}
