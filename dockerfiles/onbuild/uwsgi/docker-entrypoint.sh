@@ -29,6 +29,13 @@ function render {
 }
 
 if [ "$1" = 'uwsgi' ]; then
+    python ${WEBAPP_ROOT}/manage.py {makemigrations,migrate}
+    python ${WEBAPP_ROOT}/manage.py createsuperuser \
+    	--username admin \
+    	--noinput \
+    	--email atila.satilmis@gmail.com \
+    	--database default
+
     render /etc/confd/conf.d/{defaults.ini.toml,defaults.ini.toml.rendered}
     render /etc/confd/templates/{defaults.ini.tmpl,defaults.ini.tmpl.rendered}
     mv /etc/confd/conf.d/{defaults.ini.toml.rendered,defaults.ini.toml}
