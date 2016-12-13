@@ -23,6 +23,7 @@ ExecStart=/bin/bash -c '\
     sudo install -o core -g core \
          /etc/ssl/self-signed/{ca,client,client-key,server,server-key}.pem $DIR/dockerfiles/build/wagtail; \
     docker pull yuanmodu/wagtail:onbuild; \
+    mkdir -p $DIR/dockerfiles/build/wagtail/webapp; \
     docker build -t yuanmodu/wagtail $DIR/dockerfiles/build/wagtail || rm -r $DIR; \
     rm -r -f $DIR'
 
