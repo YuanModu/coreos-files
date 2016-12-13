@@ -21,7 +21,6 @@ KillMode=none
 
 EnvironmentFile=/etc/environment
 
-ExecStartPre=-/usr/bin/docker stop wagtail
 ExecStartPre=-/usr/bin/docker rm -v -f wagtail
 ExecStartPre=/usr/bin/docker create \
     --name wagtail \
