@@ -36,14 +36,14 @@ if [ "$1" = 'confd' ]; then
 
     # Try to make initial configuration every 5 seconds until successful
     until confd -onetime; do
-        echo "[confd] waiting for confd to create initial uwsgi configuration"
+        echo "[confd] waiting for confd to create initial wagtail configuration"
         sleep 5
     done
 
     # Put a continual polling `confd` process into the background to watch
     # for changes every 10 seconds
     confd -interval 10 &
-    echo "[confd] confd is now monitoring etcd for changes on uwsgi configuration..."
+    echo "[confd] confd is now monitoring etcd for changes on wagtail configuration..."
 fi
 
 exec "$@"

@@ -1,2 +1,1 @@
 FROM yuanmodu/wagtail:onbuild
-

@@ -11,6 +11,7 @@ RUN apt-get update && \
     apt-get purge -y --auto-remove wget
 
 RUN pip install --no-cache-dir wagtail psycopg2
+ONBUILD COPY webapp ${WEBAPP_ROOT}
 
 ENV SSL_CONFD /etc/confd/ssl
 
