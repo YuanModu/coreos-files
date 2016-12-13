@@ -21,13 +21,11 @@ ExecStart=/bin/bash -c '\
     DIR=$(mktemp -d); \
     git clone https://github.com/YuanModu/coreos-files.git $DIR; \
     sudo install -o core -g core \
-        /etc/etcd/ssl/{ca,client,client-key,server,server-key}.pem $DIR/dockerfiles/build/uwsgi; \
+        /etc/ssl/self-signed/{ca,client,client-key,server,server-key}.pem $DIR/dockerfiles/build/uwsgi; \
     docker build -t yuanmodu/uwsgi $DIR/dockerfiles/build/uwsgi || rm -r $DIR; \
-    docker build -t yuanmodu/wagtail $DIR/dockerfiles/build/wagtail || rm -r $DIR; \
     rm -r -f $DIR'
 
 ExecStop=/bin/bash -c '\
-    docker rmi yuanmodu/wagtail || true; \
     docker rmi yuanmodu/uwsgi || true'
 
 [X-Fleet]

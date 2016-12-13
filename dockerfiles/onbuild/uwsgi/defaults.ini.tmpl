@@ -1,6 +1,8 @@
 [uwsgi]
 pythonpath= /usr/share/webapp
 module = webapp.wsgi:application
+touch-reload = /usr/share/webapp/touch-reload
+pidfile = /var/run/uwsgi.pid
 suwsgi-socket = 0.0.0.0:8000,/etc/uwsgi/ssl/server.pem,/etc/uwsgi/ssl/server-key.pem,HIGH,!/etc/uwsgi/ssl/ca.pem
 stats = 127.0.0.1:8001
 uid = uwsgi

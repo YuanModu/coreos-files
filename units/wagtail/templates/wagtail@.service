@@ -26,9 +26,7 @@ ExecStartPre=-/usr/bin/docker rm -v -f wagtail
 ExecStartPre=/usr/bin/docker create \
     --name wagtail \
     --env INSTANCE=%i \
-    --volume /mnt/wagtail/webapp:/usr/share/webapp:ro \
-    -p ${COREOS_PRIVATE_IPV4}:8000:8000 \
-    -p ${COREOS_PRIVATE_IPV4}:5432:5432 \
+    --volume /mnt/python-%i/webapp:/usr/share/webapp \
     yuanmodu/wagtail
 ExecStart=/usr/bin/docker start -a wagtail
 

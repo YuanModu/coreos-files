@@ -14,37 +14,30 @@ RUN apt-get update && \
 
 RUN pip install --no-cache-dir uwsgi
 
-ENV SSLDIR /usr/share/ssl/certs
-ENV UWSGISSL /etc/uwsgi/ssl
-ENV CONFDSSL /etc/confd/ssl
+ENV SSL_CONFD /etc/confd/ssl
+ENV SSL_UWSGI /etc/uwsgi/ssl
 
-RUN mkdir -p $SSLDIR && \
-    mkdir -p $UWSGISSL && \
-    mkdir -p $CONFDSSL && \
+RUN mkdir -p $SSL_CONFD && \
+    mkdir -p $SSL_UWSGI && \
     mkdir -p /etc/confd/conf.d && \
     mkdir -p /etc/confd/templates
-
-RUN ln -s $SSLDIR/ca.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/client.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/client-key.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/ca.pem $UWSGISSL/ && \
-    ln -s $SSLDIR/server.pem $UWSGISSL/ && \
-    ln -s $SSLDIR/server-key.pem $UWSGISSL/
 
 COPY defaults.ini.toml /etc/confd/conf.d/
 COPY defaults.ini.tmpl /etc/confd/templates/
 
-ONBUILD COPY ca.pem $SSLDIR
-ONBUILD COPY client.pem $SSLDIR
-ONBUILD COPY client-key.pem $SSLDIR
+ONBUILD COPY ca.pem $SSL_CONFD/
+ONBUILD COPY client.pem $SSL_CONFD/
+ONBUILD COPY client-key.pem $SSL_CONFD/
 ONBUILD RUN chmod 0400 $SSLDIR/client-key.pem
 
-ONBUILD COPY ca.pem $SSLDIR
-ONBUILD COPY server.pem $SSLDIR
-ONBUILD COPY server-key.pem $SSLDIR
-ONBUILD RUN chmod 0400 $SSLDIR/server-key.pem
+ONBUILD COPY ca.pem $SSL_UWSGI/
+ONBUILD COPY server.pem $SSL_UWSGI/
+ONBUILD COPY server-key.pem $SSL_UWSGI/
+ONBUILD RUN chown -R uwsgi:uwsgi $SSL_UWSGI/
 
-RUN mkdir -p ${WEBAPP_ROOT} && chown -R uwsgi:uwsgi ${WEBAPP_ROOT}
+RUN mkdir -p ${WEBAPP_ROOT}
+RUN touch ${WEBAPP_ROOT}/touch-reload
+VOLUME ${WEBAPP_ROOT}
 WORKDIR ${WEBAPP_ROOT}
 
 COPY docker-entrypoint.sh /entrypoint.sh
@@ -52,4 +45,4 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 8000 5432
-CMD ["uwsgi", "--ini", "/etc/uwsgi/defaults.ini", "--pidfile", "/var/run/uwsgi.pid"]
+CMD ["uwsgi", "--ini", "/etc/uwsgi/defaults.ini"]

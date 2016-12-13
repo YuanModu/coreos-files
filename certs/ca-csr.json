@@ -1,0 +1,15 @@
+{
+    "CN": "Yuan CA",
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "TR",
+            "ST": "Izmir",
+            "O": "Yuan Makina Gida Temizlik Hizmetleri Limitet Şirketi",
+            "OU": "Technical Support"
+        }
+    ]
+}

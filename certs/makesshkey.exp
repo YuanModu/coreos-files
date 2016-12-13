@@ -1,0 +1,24 @@
+#!/bin/expect
+
+if {[llength $argv] == 0} {
+  send_user "Usage: scriptname hostname folder\n"
+  exit 1
+}
+
+set timeout 9
+set SERVER_NAME [lindex $argv 0]
+set SERVER_FOLDER [lindex $argv 1]
+log_user 0
+exp_internal 0
+
+set send_slow {1 .1}
+proc send {ignore arg} {
+    sleep .1
+    exp_send -s -- $arg
+}
+spawn ssh-keygen -t rsa -C core\@$SERVER_NAME -f $SERVER_FOLDER/id_rsa
+expect {
+    -exact "Overwrite (y/n)? " { send -- "y\r"; exp_continue }
+    -exact "(empty for no passphrase): " { send -- "\r"; exp_continue }
+    -exact "same passphrase again: " { send -- "\r"; exp_continue }
+}
