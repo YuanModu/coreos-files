@@ -1,14 +1,16 @@
-FROM debian
+FROM python
 
 ENV CONFD_VERSION 0.11.0
 ENV WEBAPP_ROOT /usr/share/webapp
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget ca-certificates && \
+    apt-get install -y --no-install-recommends wget && \
     rm -rf /var/lib/apt/lists/* && \
     wget -O /usr/local/bin/confd https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64 && \
     chmod +x /usr/local/bin/confd && \
-    apt-get purge -y --auto-remove wget ca-certificates
+    apt-get purge -y --auto-remove wget
+
+RUN pip install --no-cache-dir wagtail psycopg2
 
 ENV SSL_CONFD /etc/confd/ssl
 
