@@ -40,6 +40,8 @@ ONBUILD RUN chown -R uwsgi:uwsgi $SSL_UWSGI/ && \
 	chmod 0440 $SSL_UWSGI/server.pem && \
 	chmod 0400 $SSL_UWSGI/server-key.pem
 
+ONBUILD COPY webapp ${WEBAPP_ROOT}
+
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
