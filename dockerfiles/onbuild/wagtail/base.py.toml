@@ -5,7 +5,7 @@
 src = "base.py.tmpl"
 
 # The location to place the rendered configuration file
-dest = "/usr/share/webapp/webapp/settings"
+dest = "/usr/share/webapp/webapp/settings/base.py"
 
 # The etcd keys or directory to watch.  This is where the information to fill in
 # the template will come from.
