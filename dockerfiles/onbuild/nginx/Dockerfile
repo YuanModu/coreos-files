@@ -9,30 +9,31 @@ RUN apt-get update && \
     chmod +x /usr/local/bin/confd && \
     apt-get purge -y --auto-remove wget
 
-ENV SSLDIR /usr/share/ssl/certs
-ENV NGINXSSL /etc/nginx/ssl
-ENV CONFDSSL /etc/confd/ssl
+ENV SSL_CONFD /etc/confd/ssl
+ENV SSL_NGINX /etc/nginx/ssl
 
-RUN mkdir -p $SSLDIR && \
-    mkdir -p $NGINXSSL && \
-    mkdir -p $CONFDSSL && \
+RUN mkdir -p $SSL_CONFD && \
+    mkdir -p $SSL_NGINX && \
     mkdir -p /etc/confd/conf.d && \
     mkdir -p /etc/confd/templates
-
-RUN ln -s $SSLDIR/ca.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/client.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/client-key.pem $CONFDSSL/ && \
-    ln -s $SSLDIR/ca.pem $NGINXSSL/ && \
-    ln -s $SSLDIR/client.pem $NGINXSSL/ && \
-    ln -s $SSLDIR/client-key.pem $NGINXSSL/
 
 COPY nginx.conf.toml /etc/confd/conf.d/
 COPY nginx.conf.tmpl /etc/confd/templates/
 
-ONBUILD COPY ca.pem $SSLDIR
-ONBUILD COPY client.pem $SSLDIR
-ONBUILD COPY client-key.pem $SSLDIR
-ONBUILD RUN chmod 0400 $SSLDIR/client-key.pem
+ONBUILD COPY ca.pem $SSL_CONFD/
+ONBUILD COPY client.pem $SSL_CONFD/
+ONBUILD COPY client-key.pem $SSL_CONFD/
+ONBUILD RUN  chmod 0440 $SSL_CONFD/ca.pem && \
+	chmod 0440 $SSL_CONFD/client.pem && \
+	chmod 0400 $SSL_CONFD/client-key.pem
+
+ONBUILD COPY ca.pem $SSL_NGINX/
+ONBUILD COPY client.pem $SSL_NGINX/
+ONBUILD COPY client-key.pem $SSL_NGINX/
+ONBUILD RUN chown -R nginx:ngix $SSL_NGINX/ && \
+	chmod 0440 $SSL_NGINX/ca.pem && \
+	chmod 0440 $SSL_NGINX/client.pem && \
+	chmod 0400 $SSL_NGINX/client-key.pem
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

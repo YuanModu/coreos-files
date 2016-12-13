@@ -29,6 +29,7 @@ ONBUILD COPY ca.pem $SSL_CONFD/
 ONBUILD COPY client.pem $SSL_CONFD/
 ONBUILD COPY client-key.pem $SSL_CONFD/
 ONBUILD RUN  chmod 0440 $SSL_CONFD/ca.pem && \
+	chmod 0440 $SSL_CONFD/ca.pem && \
 	chmod 0440 $SSL_CONFD/client.pem && \
 	chmod 0400 $SSL_CONFD/client-key.pem
 
