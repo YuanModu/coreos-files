@@ -28,7 +28,7 @@ COPY defaults.ini.tmpl /etc/confd/templates/
 ONBUILD COPY ca.pem $SSL_CONFD/
 ONBUILD COPY client.pem $SSL_CONFD/
 ONBUILD COPY client-key.pem $SSL_CONFD/
-ONBUILD RUN chmod 0400 $SSLDIR/client-key.pem
+ONBUILD RUN chmod 0400 $SSL_CONFD/client-key.pem
 
 ONBUILD COPY ca.pem $SSL_UWSGI/
 ONBUILD COPY server.pem $SSL_UWSGI/
