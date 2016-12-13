@@ -22,12 +22,9 @@ COPY base.py.tmpl /etc/confd/templates/
 ONBUILD COPY ca.pem $SSL_CONFD
 ONBUILD COPY client.pem $SSL_CONFD
 ONBUILD COPY client-key.pem $SSL_CONFD
-ONBUILD RUN chmod 0400 $SSL_CONFD/client-key.pem
-
-RUN mkdir -p ${WEBAPP_ROOT}
-RUN touch ${WEBAPP_ROOT}/touch-reload
-VOLUME ${WEBAPP_ROOT}
-WORKDIR ${WEBAPP_ROOT}
+ONBUILD RUN  chmod 0440 $SSL_CONFD/ca.pem && \
+	chmod 0440 $SSL_CONFD/client.pem && \
+	chmod 0400 $SSL_CONFD/client-key.pem
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
