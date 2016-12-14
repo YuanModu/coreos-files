@@ -23,8 +23,7 @@ ExecStart=/bin/bash -c '\
     git clone https://github.com/YuanModu/yuan.com.tr.git $DIR/dockerfiles/build/uwsgi/webapp; \
     sudo install -o core -g core \
         /etc/ssl/self-signed/{ca,client,client-key,server,server-key}.pem $DIR/dockerfiles/build/uwsgi; \
-    docker pull yuanmodu/uwsgi:onbuild; \
-    docker build -t yuanmodu/uwsgi $DIR/dockerfiles/build/uwsgi || rm -r $DIR; \
+    docker build --pull -t yuanmodu/uwsgi $DIR/dockerfiles/build/uwsgi || rm -r $DIR; \
     rm -r -f $DIR'
 
 ExecStop=/bin/bash -c '\
