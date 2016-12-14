@@ -37,7 +37,7 @@ ExecStart=/bin/bash -c '{ \
     etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/post-buffering 0; \
     etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/offload-threads 0; \
     etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/memory-report true; \
-    } > /dev/null'
+} > /dev/null'
 
 ExecStop=/bin/bash -c 'etcdctl $ETCDCTL_OPTS rm /services/uwsgi/%i --recursive'
 
