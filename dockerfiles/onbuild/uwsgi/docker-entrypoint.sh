@@ -29,10 +29,12 @@ function render {
 }
 
 if [ "$1" = 'uwsgi' ]; then
-    render /etc/confd/conf.d/{defaults.ini.toml,defaults.ini.toml.rendered}
-    render /etc/confd/templates/{defaults.ini.tmpl,defaults.ini.tmpl.rendered}
-    mv /etc/confd/conf.d/{defaults.ini.toml.rendered,defaults.ini.toml}
-    mv /etc/confd/templates/{defaults.ini.tmpl.rendered,defaults.ini.tmpl}
+    TOML=$(mktemp)
+    TMPL=$(mktemp)
+    render /etc/confd/conf.d/defaults.ini.toml $TOML
+    render /etc/confd/templates/defaults.ini.tmpl $TMPL
+    mv $TOML /etc/confd/conf.d/defaults.ini.toml
+    mv $TMPL /etc/confd/templates/defaults.ini.tmpl
 
     # Try to make initial configuration every 5 seconds until successful
     until confd -onetime; do
