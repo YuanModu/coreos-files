@@ -21,7 +21,6 @@ KillMode=none
 
 EnvironmentFile=/etc/environment
 
-ExecStartPre=-/usr/bin/docker stop postgres
 ExecStartPre=-/usr/bin/docker rm -v -f postgres
 ExecStartPre=/usr/bin/docker create \
     --name postgres \
@@ -31,7 +30,6 @@ ExecStartPre=/usr/bin/docker create \
     yuanmodu/postgres
 ExecStart=/usr/bin/docker start -a postgres
 
-ExecStop=/usr/bin/docker stop postgres
 ExecStopPost=/usr/bin/docker rm -v -f postgres
 
 [X-Fleet]

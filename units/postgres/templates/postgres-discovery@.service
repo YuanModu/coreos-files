@@ -18,9 +18,9 @@ EnvironmentFile=/etc/environment
 
 Environment='ETCDCTL_OPTS=\
     --endpoint https://127.0.0.1:2379 \
-    --cert-file /etc/etcd/ssl/client.pem \
-    --key-file /etc/etcd/ssl/client-key.pem \
-    --ca-file /etc/etcd/ssl/ca.pem'
+    --cert-file /etc/ssl/self-signed/client.pem \
+    --key-file /etc/ssl/self-signed/client-key.pem \
+    --ca-file /etc/ssl/self-signed/ca.pem'
 
 ExecStart=/bin/bash -c '{ \
     set -e -o pipefail; \
