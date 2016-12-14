@@ -34,6 +34,6 @@ ExecStop=/usr/bin/docker stop uwsgi
 ExecStopPost=/usr/bin/docker rm -v uwsgi
 
 [X-Fleet]
-Conflicts=nginx.service
+Conflicts=nginx@*.service
 Conflicts=uwsgi@*.service
 Conflicts=postgres@*.service
