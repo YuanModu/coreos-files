@@ -30,8 +30,7 @@ ExecStartPre=/usr/bin/docker create \
     yuanmodu/uwsgi
 ExecStart=/usr/bin/docker start -a uwsgi
 
-ExecStop=/usr/bin/docker stop uwsgi
-ExecStopPost=/usr/bin/docker rm -v uwsgi
+ExecStopPost=/usr/bin/docker rm -v -f uwsgi
 
 [X-Fleet]
 Conflicts=nginx@*.service
