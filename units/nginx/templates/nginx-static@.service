@@ -33,7 +33,7 @@ ExecStart=/bin/bash -c '\
         docker exec uwsgi \
             python /usr/share/webapp/manage.py collectstatic --noinput"; \
     	rsync --force --delete ${RSYNC_COMMON_OPTS} \
-        	core@10.135.44.225:/usr/share/webapp/static/ /var/www/yuan.com.tr/static'
+        	core@10.135.44.225:/mnt/uwsgi-1/static/ /var/www/yuan.com.tr/static'
 
 
 [X-Fleet]
