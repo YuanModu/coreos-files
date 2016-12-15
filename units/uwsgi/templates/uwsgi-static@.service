@@ -28,4 +28,4 @@ ExecStart=/bin/bash -c '\
     docker exec uwsgi python /usr/share/webapp/manage.py collectstatic --noinput'
 
 [X-Fleet]
-MachineOf=nginx@%i.service
+MachineOf=uwsgi@%i.service
