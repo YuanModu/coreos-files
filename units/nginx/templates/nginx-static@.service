@@ -38,9 +38,3 @@ ExecStart=/bin/bash -c '\
 
 [X-Fleet]
 MachineOf=nginx@%i.service
-
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -n \
-            core@$SERVER_PUBLIC_IP "\
-                sudo $SERVER_NAME/setetcd.sh; \
-                sudo $SERVER_NAME/setip.sh; \
-                cp $SERVER_NAME/id_rsa{,.pub} ~/.ssh/"
