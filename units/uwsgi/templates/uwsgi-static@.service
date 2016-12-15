@@ -4,7 +4,6 @@ Description=uWSGI server %i: collect static files
 Requires=etcd2.service
 
 After=etcd2.service
-After=uwsgi@%i.service
 BindsTo=uwsgi@%i.service
 
 [Service]
