@@ -4,7 +4,6 @@ Description=Nginx web server proxying uwsgi backends %i: collect static files
 Requires=etcd2.service
 
 After=etcd2.service
-BindsTo=nginx@%i.service
 
 [Service]
 Type=oneshot
