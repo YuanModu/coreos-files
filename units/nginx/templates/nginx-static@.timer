@@ -1,6 +1,7 @@
 [Unit]
 Description=Nginx web server proxying uwsgi backends %i: collect static files
 
+After=nginx@%i.service
 BindsTo=nginx@%i.service
 
 [Timer]
