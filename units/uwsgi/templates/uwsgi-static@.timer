@@ -1,12 +1,10 @@
 [Unit]
 Description=uWSGI server %i: collect static files timer
 
-After=uwsgi@%i.service
 BindsTo=uwsgi@%i.service
 
 [Timer]
 OnCalendar=minutely
-Persistent=true
 
 [X-Fleet]
 MachineOf=uwsgi@%i.service
