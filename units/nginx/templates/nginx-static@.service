@@ -22,7 +22,7 @@ Environment='RSYNC_COMMON_OPTS=\
     -avzP \
     --rsh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"'
 
-Enviroment='SSH_OPTS=\
+Environment='SSH_OPTS=\
     -n \
     -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null'
