@@ -5,6 +5,7 @@ BindsTo=uwsgi@%i.service
 
 [Timer]
 OnCalendar=minutely
+Persistent=true
 
 [X-Fleet]
 MachineOf=uwsgi@%i.service
