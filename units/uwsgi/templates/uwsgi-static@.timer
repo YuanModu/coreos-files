@@ -1,6 +1,7 @@
 [Unit]
 Description=uWSGI server %i: collect static files timer
 
+After=uwsgi@%i.service
 BindsTo=uwsgi@%i.service
 
 [Timer]
