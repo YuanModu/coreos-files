@@ -31,8 +31,8 @@ ExecStart=/bin/bash -c '\
     ssh ${SSH_OPTS} core@10.135.44.225 "\
         docker exec uwsgi \
             python /usr/share/webapp/manage.py collectstatic --noinput"; \
-    	rsync --force --delete ${RSYNC_COMMON_OPTS} \
-        	core@10.135.44.225:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static'
+    rsync --force --delete ${RSYNC_COMMON_OPTS} \
+	    core@10.135.44.225:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static'
 
 
 [X-Fleet]
