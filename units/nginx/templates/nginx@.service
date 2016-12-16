@@ -4,10 +4,12 @@ Description=Nginx web server proxying uwsgi backends %i
 Requires=docker.service
 Requires=nginx-build@%i.service
 Requires=nginx-discovery@%i.service
+Requires=nginx-static@%i.timer
 
 After=docker.service
 After=nginx-build@%i.service
 After=nginx-discovery@%i.service
+After=nginx-static@%i.timer
 
 [Service]
 Type=simple
@@ -26,6 +28,7 @@ ExecStartPre=/usr/bin/docker create \
     --name nginx \
     --env COREOS_HOSTNAME=%H \
     --volume /mnt/nginx-%i/letsencrypt:/etc/letsencrypt:ro \
+    --volume $HOME/nginx/yuan.com.tr/static:/var/www/yuan.com.tr/static \
     -p ${COREOS_PUBLIC_IPV4}:80:80 \
     -p ${COREOS_PUBLIC_IPV4}:443:443 \
     -p ${COREOS_PRIVATE_IPV4}:8000:8000 \

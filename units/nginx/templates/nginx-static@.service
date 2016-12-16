@@ -1,10 +1,9 @@
 [Unit]
-Description=Nginx web server proxying uwsgi backends %i: copy static files
+Description=Nginx web server proxying uwsgi backends %i: collect static files
 
 Requires=etcd2.service
 
 After=etcd2.service
-BindsTo=nginx@%i.service
 
 [Service]
 Type=oneshot
@@ -22,11 +21,19 @@ Environment='RSYNC_COMMON_OPTS=\
     -avzP \
     --rsh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"'
 
+Environment='SSH_OPTS=\
+    -n \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null'
+
 ExecStart=/bin/bash -c '\
     set -e -o pipefail; \
-    $SERVER_UWSGI=$(sudo -u etcd etcdctl $ETCDCTL_OPTS get /services/backup/ip); \
-    rsync --force --delete \
-        ${RSYNC_COMMON_OPTS} core@$SERVER_UWSGI:nginx/current/staticfiles/ /usr/share/webapp/static'
+    ssh ${SSH_OPTS} core@10.135.44.225 "\
+        docker exec uwsgi \
+            python /usr/share/webapp/manage.py collectstatic --noinput"; \
+    	rsync --force --delete ${RSYNC_COMMON_OPTS} \
+        	core@10.135.44.225:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static'
+
 
 [X-Fleet]
 MachineOf=nginx@%i.service

@@ -1,0 +1,10 @@
+[Unit]
+Description=Nginx web server proxying uwsgi backends %i: collect static files
+
+BindsTo=nginx@%i.service
+
+[Timer]
+OnCalendar=minutely
+
+[X-Fleet]
+MachineOf=nginx@%i.service
