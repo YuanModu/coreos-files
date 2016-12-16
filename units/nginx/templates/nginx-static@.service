@@ -1,0 +1,32 @@
+[Unit]
+Description=Nginx web server proxying uwsgi backends %i: copy static files
+
+Requires=etcd2.service
+
+After=etcd2.service
+BindsTo=nginx@%i.service
+
+[Service]
+Type=oneshot
+
+User=core
+Group=core
+
+Environment='ETCDCTL_OPTS=\
+    --endpoint https://127.0.0.1:2379 \
+    --cert-file /etc/ssl/self-signed/client.pem \
+    --key-file /etc/ssl/self-signed/client-key.pem \
+    --ca-file /etc/ssl/self-signed/ca.pem'
+
+Environment='RSYNC_COMMON_OPTS=\
+    -avzP \
+    --rsh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"'
+
+ExecStart=/bin/bash -c '\
+    set -e -o pipefail; \
+    $SERVER_UWSGI=$(sudo -u etcd etcdctl $ETCDCTL_OPTS get /services/backup/ip); \
+    rsync --force --delete \
+        ${RSYNC_COMMON_OPTS} core@$SERVER_UWSGI:nginx/current/staticfiles/ /usr/share/webapp/static'
+
+[X-Fleet]
+MachineOf=nginx@%i.service
