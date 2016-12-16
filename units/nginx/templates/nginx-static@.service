@@ -28,7 +28,7 @@ Environment='SSH_OPTS=\
 
 ExecStart=/bin/bash -c '\
     set -e -o pipefail; \
-    mkdir -p $HOME/nginx/yuan.com.tr/static
+    mkdir -p $HOME/nginx/yuan.com.tr/static; \
     ssh ${SSH_OPTS} core@10.135.37.183 "\
         docker exec uwsgi \
             python /usr/share/webapp/manage.py collectstatic --noinput"; \
