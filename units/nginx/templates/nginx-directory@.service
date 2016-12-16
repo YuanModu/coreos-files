@@ -1,0 +1,35 @@
+[Unit]
+Description=Nginx web server proxying uwsgi backends %i: create directories
+
+Requires=etcd2.service
+
+After=etcd2.service
+
+[Service]
+Type=simple
+
+User=core
+Group=core
+
+TimeoutStartSec=0
+
+KillMode=none
+
+Environment='ETCDCTL_OPTS=\
+    --endpoint https://127.0.0.1:2379 \
+    --cert-file /etc/ssl/self-signed/client.pem \
+    --key-file /etc/ssl/self-signed/client-key.pem \
+    --ca-file /etc/ssl/self-signed/ca.pem'
+
+ExecStart=/bin/bash -c '\
+    set -e -o pipefail; \
+    DOMAINS=($(sudo -u etcd etcdctl $ETCDCTL_OPTS ls --recursive /services/nginx/servers)); \
+    for DOMAIN in ${DOMAINS[@]}; \
+        do mkdir -p $HOME/nginx/$(basename $DOMAIN)/static; \
+    done; \
+    sudo etcdctl $ETCDCTL_OPTS exec-watch /services/nginx/servers -- sh -c \
+        'echo "\"$ETCD_WATCH_KEY\" \"$ETCD_WATCH_VALUE\" \"$ETCD_WATCH_ACTION\""''
+
+
+[X-Fleet]
+MachineOf=nginx@%i.service
