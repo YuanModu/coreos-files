@@ -22,6 +22,7 @@ ExecStart=/bin/bash -c '\
     git clone https://github.com/YuanModu/coreos-files.git $DIR; \
     sudo install -o core -g core \
         /etc/ssl/self-signed/{ca,client,client-key}.pem $DIR/dockerfiles/build/nginx; \
+    docker build --pull -t yuanmodu/nginx $DIR/dockerfiles/build/nginx || rm -r $DIR; \
     rm -r -f $DIR'
 
 ExecStop=/bin/bash -c '\
