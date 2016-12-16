@@ -9,7 +9,7 @@ Requires=nginx-static@%i.timer
 After=docker.service
 After=nginx-build@%i.service
 After=nginx-discovery@%i.service
-After=nginx-static@%i.timer
+Before=nginx-static@%i.timer
 
 [Service]
 Type=simple
