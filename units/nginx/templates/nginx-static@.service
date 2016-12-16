@@ -28,7 +28,11 @@ Environment='SSH_OPTS=\
 
 ExecStart=/bin/bash -c '\
     set -e -o pipefail; \
-    /bin/true'
+    ssh ${SSH_OPTS} core@10.135.37.183 "\
+        docker exec uwsgi \
+            python /usr/share/webapp/manage.py collectstatic --noinput"; \
+    rsync --force --delete ${RSYNC_COMMON_OPTS} \
+	    core@10.135.37.183:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static'
 
 
 [X-Fleet]
