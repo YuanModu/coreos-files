@@ -24,6 +24,11 @@ EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker rm -v -f nginx
 ExecStartPre=/usr/bin/docker create \
     --name nginx \
+    --env COREOS_HOSTNAME=%H \
+    --volume /mnt/nginx-%i/letsencrypt:/etc/letsencrypt:ro \
+    -p ${COREOS_PUBLIC_IPV4}:80:80 \
+    -p ${COREOS_PUBLIC_IPV4}:443:443 \
+    -p ${COREOS_PRIVATE_IPV4}:8000:8000 \
     yuanmodu/nginx
 ExecStart=/usr/bin/docker start -a nginx
 
