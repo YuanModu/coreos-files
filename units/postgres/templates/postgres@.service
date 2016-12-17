@@ -30,7 +30,7 @@ ExecStartPre=/usr/bin/docker create \
     yuanmodu/postgres
 ExecStart=/usr/bin/docker start -a postgres
 
-ExecStopPost=/usr/bin/docker rm -v -f postgres
+ExecStop=/usr/bin/docker rm -v -f postgres
 
 [X-Fleet]
 Conflicts=nginx@*.service

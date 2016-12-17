@@ -8,8 +8,8 @@ After=etcd2.service
 [Service]
 Type=simple
 
-User=core
-Group=core
+User=root
+Group=root
 
 TimeoutStartSec=0
 
@@ -21,8 +21,17 @@ Environment='ETCDCTL_OPTS=\
     --key-file /etc/ssl/self-signed/client-key.pem \
     --ca-file /etc/ssl/self-signed/ca.pem'
 
-ExecStart=sudo etcdctl $ETCDCTL_OPTS exec-watch /services/nginx/servers -- sh -c \
-        'echo "\"$ETCD_WATCH_KEY\" \"$ETCD_WATCH_VALUE\" \"$ETCD_WATCH_ACTION\""'
+ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
+    /services/nginx/servers -- \
+    bash -c ' \
+        case "$ETCD_WATCH_ACTION" in \
+            set) \
+                mkdir -p /var/www/$(basename $ETCD_WATCH_KEY)/static;; \
+            delete) \
+                rm -r /var/www/$(basename $ETCD_WATCH_KEY)/static;; \
+        esac'
+
+ExecStop=/usr/bin/kill $MAINPID
 
 
 [X-Fleet]

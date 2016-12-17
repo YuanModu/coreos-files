@@ -4,12 +4,12 @@ Description=Nginx web server proxying uwsgi backends %i
 Requires=docker.service
 Requires=nginx-build@%i.service
 Requires=nginx-discovery@%i.service
-Requires=nginx-static@%i.timer
+Requires=nginx-directory@%i.service
 
 After=docker.service
 After=nginx-build@%i.service
 After=nginx-discovery@%i.service
-Before=nginx-static@%i.timer
+Before=nginx-directory@%i.service
 
 [Service]
 Type=simple
@@ -34,7 +34,7 @@ ExecStartPre=/usr/bin/docker create \
     yuanmodu/nginx
 ExecStart=/usr/bin/docker start -a nginx
 
-ExecStopPost=/usr/bin/docker rm -v -f nginx
+ExecStop=/usr/bin/docker rm -v -f nginx
 
 [X-Fleet]
 MachineMetadata=hostname=%i
