@@ -24,6 +24,7 @@ Environment='ETCDCTL_OPTS=\
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     /services/nginx/servers -- \
     bash -c ' \
+    	echo "0:$ETCDCTL_OPTS"; \
         NGINX_DOMAIN=$(echo "$ETCD_WATCH_KEY" | cut -d "/" -f5); \
         echo "1:$NGINX_DOMAIN"; \
         UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi)); \
