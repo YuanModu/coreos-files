@@ -35,7 +35,7 @@ ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
                         UPSTREAMS+=($(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/ip)); \
                     fi; \
                 done; \
-                UPSTREAM=${UPSTREAMS[$RANDOM % ${#UPSTREAMS[@]}}; \
+                UPSTREAM=${UPSTREAMS[$RANDOM % ${#UPSTREAMS[@]}]}; \
                 mkdir -p /var/www/$NGINX_DOMAIN/static; \
                 ssh ${SSH_OPTS} core@$UPSTREAM "\
                     docker exec uwsgi \
