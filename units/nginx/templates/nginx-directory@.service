@@ -25,17 +25,23 @@ ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     /services/nginx/servers -- \
     bash -c ' \
         NGINX_DOMAIN=$(echo "$ETCD_WATCH_KEY" | cut -d "/" -f5); \
+        echo "1:$NGINX_DOMAIN"; \
         UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi)); \
+        echo "2:${UWSGI_SERVER[@]}"; \
         UPSTREAMS=(); \
+        echo "3:${UPSTREAMS[@]}"; \
         case "$ETCD_WATCH_ACTION" in \
             set) \
                 for SERVER in "${UWSGI_SERVER[@]##*/}"; do \
+                echo "4:$SERVER"; \
                     UWSGI_DOMAIN=$(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/server); \
                     if [[ $UWSGI_DOMAIN = $NGINX_DOMAIN ]]; then \
                         UPSTREAMS+=($(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/ip)); \
+                        echo "5:${UPSTREAMS[@]}"; \
                     fi; \
                 done; \
                 UPSTREAM=${UPSTREAMS[$RANDOM % ${#UPSTREAMS[@]}]}; \
+                echo "6:${UPSTREAM[@]}"; \
                 mkdir -p /var/www/$NGINX_DOMAIN/static; \
                 ssh ${SSH_OPTS} core@$UPSTREAM "\
                     docker exec uwsgi \
