@@ -40,8 +40,8 @@ ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
                 ssh ${SSH_OPTS} core@$UPSTREAM "\
                     docker exec uwsgi \
                         python /usr/share/webapp/manage.py collectstatic --noinput"; \
-                    rsync --force --delete ${RSYNC_COMMON_OPTS} \
-                        core@$UPSTREAM:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static;; \
+                rsync --force --delete ${RSYNC_COMMON_OPTS} \
+                    core@$UPSTREAM:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static;; \
             delete) \
                 rm -r /var/www/$NGINX_DOMAIN;; \
         esac'
