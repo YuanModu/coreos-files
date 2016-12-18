@@ -24,11 +24,26 @@ Environment='ETCDCTL_OPTS=\
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     /services/nginx/servers -- \
     bash -c ' \
+    	NGINX_DOMAIN=$(echo "$ETCD_WATCH_KEY" | cut -d "/" -f5); \
+    	UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi)); \
+    	UPSTREAMS=(); \
         case "$ETCD_WATCH_ACTION" in \
             set) \
-                mkdir -p /var/www/$(basename $ETCD_WATCH_KEY)/static;; \
+            	for SERVER in "${UWSGI_SERVER[@]##*/}"; do \
+            		UWSGI_DOMAIN=$(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/server); \
+            		if [[ $UWSGI_DOMAIN = $NGINX_DOMAIN ]]; then \
+            			UPSTREAMS+=($(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/ip)); \
+        			fi; \
+    			done; \
+				UPSTREAM=${UPSTREAMS[$RANDOM % ${#UPSTREAMS[@]} ]}; \
+                mkdir -p /var/www/$NGINX_DOMAIN/static; \
+			    ssh ${SSH_OPTS} core@$UPSTREAM "\
+					docker exec uwsgi \
+						python /usr/share/webapp/manage.py collectstatic --noinput"; \
+					rsync --force --delete ${RSYNC_COMMON_OPTS} \
+						core@$UPSTREAM:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static;; \
             delete) \
-                rm -r /var/www/$(basename $ETCD_WATCH_KEY)/static;; \
+                rm -r /var/www/$NGINX_DOMAIN;; \
         esac'
 
 ExecStop=/usr/bin/kill $MAINPID
