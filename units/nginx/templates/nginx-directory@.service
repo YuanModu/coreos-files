@@ -36,7 +36,6 @@ ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     	set -e -u -o pipefail; \
     	NGINX_DOMAIN=$(echo "$ETCD_WATCH_KEY" | cut -d "/" -f5); \
     	UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi)); \
-    	echo $NGINX_DOMAIN; \
     	echo ${UWSGI_SERVER[@]};'
 
 ExecStop=/usr/bin/kill $MAINPID
