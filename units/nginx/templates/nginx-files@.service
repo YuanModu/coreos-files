@@ -1,0 +1,30 @@
+[Unit]
+Description=Nginx web server proxying uwsgi backends %i: create directories
+
+Requires=etcd2.service
+
+After=etcd2.service
+
+[Service]
+Type=simple
+
+User=root
+Group=root
+
+TimeoutStartSec=0
+
+KillMode=none
+
+Environment='ETCDCTL_OPTS=\
+    --endpoint https://127.0.0.1:2379 \
+    --cert-file /etc/ssl/self-signed/client.pem \
+    --key-file /etc/ssl/self-signed/client-key.pem \
+    --ca-file /etc/ssl/self-signed/ca.pem'
+
+ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
+    /services/nginx/servers -- bash /etc/yuan/script/nginx-files.sh
+ExecStop=/usr/bin/kill $MAINPID
+
+
+[X-Fleet]
+MachineOf=nginx@%i.service
