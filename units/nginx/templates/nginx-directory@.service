@@ -26,9 +26,9 @@ Environment='SSH_OPTS=\
     -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null'
 
-Environment='RSYNC_COMMON_OPTS=\
+Environment="RSYNC_COMMON_OPTS=\
     -avzP \
-    --rsh 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null''
+    --rsh 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
 
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     /services/nginx/servers -- \
