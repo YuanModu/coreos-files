@@ -33,7 +33,7 @@ Environment='RSYNC_COMMON_OPTS=\
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     /services/nginx/servers -- \
     bash -c ' \
-    	set -e -o pipefail; \
+    	set -e -u -o pipefail; \
     	NGINX_DOMAIN=$(echo "$ETCD_WATCH_KEY" | cut -d "/" -f5); \
     	UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi)); \
     	echo $NGINX_DOMAIN; \
