@@ -33,36 +33,9 @@ Environment='RSYNC_COMMON_OPTS=\
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     /services/nginx/servers -- \
     bash -c ' \
-    	set -e -o pipefail; \
-    	ETCDCTL_OPTS=${0}; \
-    	SSH_OPTS=${1}; \
-    	RSYNC_COMMON_OPTS=${2}; \
-        NGINX_DOMAIN=$(echo "$ETCD_WATCH_KEY" | cut -d "/" -f5); \
-        UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi)); \
-        UPSTREAMS=(); \
-        case "$ETCD_WATCH_ACTION" in \
-            set) \
-                for SERVER in "${UWSGI_SERVER[@]##*/}"; do \
-                    UWSGI_DOMAIN=$(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/server); \
-                    if [[ $UWSGI_DOMAIN = $NGINX_DOMAIN ]]; then \
-                        UPSTREAMS+=($(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/ip)); \
-                    fi; \
-                done; \
-                if [[ "${#UPSTREAMS[@]}" -gt "0" ]]; then \
-                    UPSTREAM=${UPSTREAMS[$RANDOM % ${#UPSTREAMS[@]}]}; \
-                    mkdir -p /var/www/$NGINX_DOMAIN/static; \
-                    ssh ${SSH_OPTS} core@$UPSTREAM "\
-                        docker exec uwsgi \
-                            python /usr/share/webapp/manage.py collectstatic --noinput"; \
-                    rsync --force --delete ${RSYNC_COMMON_OPTS} \
-                        core@$UPSTREAM:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static; \
-                fi;; \
-            delete) \
-                rm -r /var/www/$NGINX_DOMAIN;; \
-        esac' "$ETCDCTL_OPTS" "$SSH_OPTS" "$RSYNC_COMMON_OPTS"
+    	set -e -o pipefail; echo $ETCDCTL_OPTS'
 
 ExecStop=/usr/bin/kill $MAINPID
-
 
 [X-Fleet]
 MachineOf=nginx@%i.service
