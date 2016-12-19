@@ -22,7 +22,7 @@ Environment='ETCDCTL_OPTS=\
     --ca-file /etc/ssl/self-signed/ca.pem'
 
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
-    /services/nginx/servers \
+    /services/nginx/servers -- \
     bash -c 'set -e -o pipefail; echo "test"; echo "${0}"' "$ETCDCTL_OPTS"
 
 ExecStop=/usr/bin/kill $MAINPID
