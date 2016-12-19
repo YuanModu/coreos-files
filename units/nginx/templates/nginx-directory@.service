@@ -35,13 +35,9 @@ ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     bash -c ' \
     	set -e -o pipefail; \
     	ETCDCTL_OPTS=${0}; \
-    	SSH_OPTS=${1}; \
-    	RSYNC_COMMON_OPTS=${2}; \
-        NGINX_DOMAIN=$(echo "$ETCD_WATCH_KEY" | cut -d "/" -f5); \
-        UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi)); \
-        echo "$ETCDCTL_OPTS"; \
-        echo "$SSH_OPTS"; \
-        echo "$RSYNC_COMMON_OPTS"' "$ETCDCTL_OPTS" "$SSH_OPTS" "$RSYNC_COMMON_OPTS"
+    	echo "$ETCDCTL_OPTS" \
+        UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi))' \
+        "$ETCDCTL_OPTS"
 
 ExecStop=/usr/bin/kill $MAINPID
 
