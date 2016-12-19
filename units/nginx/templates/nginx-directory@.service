@@ -35,7 +35,7 @@ ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     bash -c ' \
     	set -e -o pipefail; \
     	ETCDCTL_OPTS=${0}; \
-    	echo "$ETCDCTL_OPTS" \
+    	echo "$ETCDCTL_OPTS"; \
         UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi))' \
         "$ETCDCTL_OPTS"
 
