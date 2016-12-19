@@ -41,8 +41,7 @@ ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
         UWSGI_SERVER=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi)); \
         echo "$ETCDCTL_OPTS"; \
         echo "$SSH_OPTS"; \
-        echo "$RSYNC_COMMON_OPTS"' \
-        "$ETCDCTL_OPTS" "$SSH_OPTS" "$RSYNC_COMMON_OPTS"
+        echo "$RSYNC_COMMON_OPTS"' "$ETCDCTL_OPTS" "$SSH_OPTS" "$RSYNC_COMMON_OPTS"
 
 ExecStop=/usr/bin/kill $MAINPID
 
