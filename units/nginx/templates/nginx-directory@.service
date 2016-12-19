@@ -25,6 +25,7 @@ ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     /services/nginx/servers -- \
     bash -c ' \
     	set -e -o pipefail; \
+    	echo "test"; \
     	ETCDCTL_OPTS=${0}; \
     	echo "$ETCDCTL_OPTS"' "$ETCDCTL_OPTS"
 
