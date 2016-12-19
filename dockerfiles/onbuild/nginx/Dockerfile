@@ -11,6 +11,7 @@ RUN apt-get update && \
 
 ENV SSL_CONFD /etc/confd/ssl
 ENV SSL_NGINX /etc/nginx/ssl
+ENV SH_NGINX /etc/yuan/script
 
 RUN mkdir -p $SSL_CONFD && \
     mkdir -p $SSL_NGINX && \
@@ -33,6 +34,8 @@ ONBUILD COPY client-key.pem $SSL_NGINX/
 ONBUILD RUN chmod 0440 $SSL_NGINX/ca.pem && \
 	chmod 0440 $SSL_NGINX/client.pem && \
 	chmod 0400 $SSL_NGINX/client-key.pem
+
+ONBUILD COPY nginx-files.sh $SH_NGINX/
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

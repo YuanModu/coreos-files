@@ -4,12 +4,12 @@ Description=Nginx web server proxying uwsgi backends %i
 Requires=docker.service
 Requires=nginx-build@%i.service
 Requires=nginx-discovery@%i.service
-Requires=nginx-directory@%i.service
+Requires=nginx-files@%i.service
 
 After=docker.service
 After=nginx-build@%i.service
 After=nginx-discovery@%i.service
-Before=nginx-directory@%i.service
+Before=nginx-static@%i.service
 
 [Service]
 Type=simple
