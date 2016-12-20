@@ -9,7 +9,7 @@ Requires=nginx-files@%i.service
 After=docker.service
 After=nginx-build@%i.service
 After=nginx-discovery@%i.service
-Before=nginx-static@%i.service
+After=nginx-files@%i.service
 
 [Service]
 Type=simple
