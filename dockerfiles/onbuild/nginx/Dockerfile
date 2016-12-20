@@ -36,6 +36,7 @@ ONBUILD RUN chmod 0440 $SSL_NGINX/ca.pem && \
 	chmod 0400 $SSL_NGINX/client-key.pem
 
 ONBUILD COPY nginx-files.sh $SH_NGINX/
+ONBUILD RUN chmod +x $SH_NGINX/nginx-files.sh
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
