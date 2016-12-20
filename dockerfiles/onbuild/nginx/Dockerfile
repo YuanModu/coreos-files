@@ -15,11 +15,14 @@ ENV SH_NGINX /etc/yuan/script
 
 RUN mkdir -p $SSL_CONFD && \
     mkdir -p $SSL_NGINX && \
+    mkdir -p $SH_NGINX && \
     mkdir -p /etc/confd/conf.d && \
     mkdir -p /etc/confd/templates
 
 COPY nginx.conf.toml /etc/confd/conf.d/
 COPY nginx.conf.tmpl /etc/confd/templates/
+COPY nginx-files.sh $SH_NGINX/
+RUN chmod +x $SH_NGINX/nginx-files.sh
 
 ONBUILD COPY ca.pem $SSL_CONFD/
 ONBUILD COPY client.pem $SSL_CONFD/
@@ -34,9 +37,6 @@ ONBUILD COPY client-key.pem $SSL_NGINX/
 ONBUILD RUN chmod 0440 $SSL_NGINX/ca.pem && \
 	chmod 0440 $SSL_NGINX/client.pem && \
 	chmod 0400 $SSL_NGINX/client-key.pem
-
-ONBUILD COPY nginx-files.sh $SH_NGINX/
-ONBUILD RUN chmod +x $SH_NGINX/nginx-files.sh
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
