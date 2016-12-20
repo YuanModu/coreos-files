@@ -4,6 +4,7 @@ Description=Nginx web server proxying uwsgi backends %i: create directories
 Requires=etcd2.service
 
 After=etcd2.service
+BindsTo=nginx@%i.service
 
 [Service]
 Type=simple
