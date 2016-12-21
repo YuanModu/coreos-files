@@ -2,11 +2,6 @@
 
 set -e -o pipefail
 
-if [[ $EUID -ne 0 ]]; then
-   echo -e "\e[31mThis script must run as root\e[0m" 1>&2
-   exit 1
-fi
-
 export ETCDCTL_OPTS="\
     --endpoint https://127.0.0.1:2379 \
     --cert-file /etc/ssl/self-signed/client.pem \

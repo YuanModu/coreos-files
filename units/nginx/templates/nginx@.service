@@ -5,11 +5,13 @@ Requires=docker.service
 Requires=nginx-build@%i.service
 Requires=nginx-discovery@%i.service
 Requires=nginx-files@%i.service
+Requires=nginx-directory@%i.service
 
 After=docker.service
 After=nginx-build@%i.service
 After=nginx-discovery@%i.service
 After=nginx-files@%i.service
+After=nginx-directory@%i.service
 
 [Service]
 Type=simple
