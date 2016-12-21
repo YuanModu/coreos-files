@@ -32,11 +32,11 @@ case "$ETCD_WATCH_ACTION" in
         done
         if [[ "${#UPSTREAMS[@]}" -gt "0" ]]; then
             UPSTREAM=${UPSTREAMS[$RANDOM % ${#UPSTREAMS[@]}]}
-               # ssh ${SSH_OPTS} core@$UPSTREAM "\
-               #     docker exec uwsgi \
-               #         python /usr/share/webapp/manage.py collectstatic --noinput"; \
-               # rsync --force --delete ${RSYNC_COMMON_OPTS} \
-               #     core@$UPSTREAM:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static; \
+               ssh ${SSH_OPTS} core@$UPSTREAM "\
+                   docker exec uwsgi \
+                       python /usr/share/webapp/manage.py collectstatic --noinput"; \
+               rsync --force --delete ${RSYNC_COMMON_OPTS} \
+                   core@$UPSTREAM:/mnt/uwsgi-1/static/ $HOME/nginx/yuan.com.tr/static; \
             mkdir -p /var/www/$NGINX_DOMAIN/static
         fi;;
     delete)
