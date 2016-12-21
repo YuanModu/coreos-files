@@ -9,8 +9,8 @@ BindsTo=nginx@%i.service
 [Service]
 Type=simple
 
-User=etcd
-Group=etcd
+User=core
+Group=core
 
 TimeoutStartSec=0
 
