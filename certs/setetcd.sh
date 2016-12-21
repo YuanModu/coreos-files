@@ -14,7 +14,7 @@ CERTGROUP=cert
 CERTDIR=/etc/ssl/self-signed
 mkdir -p $CERTDIR
 cp $WORKDIR/{ca,client,client-key,server,server-key,peer,peer-key}.pem $CERTDIR/
-groupadd $CERTGROUP
+groupadd -f $CERTGROUP
 gpasswd -a etcd $CERTGROUP
 gpasswd -a fleet $CERTGROUP
 chgrp -R  $CERTGROUP $CERTDIR/
