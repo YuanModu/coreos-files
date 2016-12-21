@@ -1,0 +1,20 @@
+[Unit]
+Description=Nginx web server proxying uwsgi backends %i: make directories
+
+BindsTo=nginx@%i.service
+
+[Service]
+Type=oneshot
+
+User=root
+Group=root
+
+RemainAfterExit=yes
+
+TimeoutStartSec=0
+
+ExecStart=/bin/install -o core -g core -d /etc/yuan
+ExecStart=/bin/install -o core -g core -d /var/www
+
+[X-Fleet]
+MachineOf=nginx@%i.service
