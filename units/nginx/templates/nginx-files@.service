@@ -9,8 +9,8 @@ BindsTo=nginx@%i.service
 [Service]
 Type=simple
 
-User=core
-Group=core
+User=root
+Group=root
 
 TimeoutStartSec=0
 
@@ -28,12 +28,12 @@ ExecStartPre=/bin/bash -c '\
     set -e -o pipefail; \
     DIR=$(mktemp -d); \
     git clone https://github.com/YuanModu/coreos-files.git $DIR; \
-    sudo -u root mkdir -p $SCRIPT; \
-    sudo -u root install -m755 $DIR/scripts/nginx-files.sh $SCRIPT/; \
+    mkdir -p $SCRIPT; \
+    install -m755 $DIR/scripts/nginx-files.sh $SCRIPT/; \
     rm -r -f $DIR'
 
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
-    /services/nginx/servers -- sudo -u root bash /etc/yuan/script/nginx-files.sh
+    /services/nginx/servers -- bash /etc/yuan/script/nginx-files.sh
 
 ExecStop=/usr/bin/kill $MAINPID
 
