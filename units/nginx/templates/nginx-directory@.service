@@ -16,5 +16,7 @@ TimeoutStartSec=0
 ExecStart=/bin/install -o core -g core -d /etc/yuan
 ExecStart=/bin/install -o core -g core -d /var/www
 
+ExecStop=/bin/rm -r -f /etc/yuan /var/www
+
 [X-Fleet]
 MachineOf=nginx@%i.service

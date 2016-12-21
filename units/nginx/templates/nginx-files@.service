@@ -35,7 +35,7 @@ ExecStartPre=/bin/bash -c '\
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
     /services/nginx/servers -- bash /etc/yuan/script/nginx-files.sh
 
-ExecStop=/usr/bin/kill $MAINPID
+ExecStop=/bin/kill $MAINPID
 
 
 [X-Fleet]

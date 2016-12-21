@@ -8,15 +8,6 @@ export ETCDCTL_OPTS="\
     --key-file /etc/ssl/self-signed/client-key.pem \
     --ca-file /etc/ssl/self-signed/ca.pem"
 
-export RSYNC_COMMON_OPTS="\
-    -avzP \
-    --rsh 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
-
-export SSH_OPTS="\
-    -n \
-    -o StrictHostKeyChecking=no \
-    -o UserKnownHostsFile=/dev/null"
-
 NGINX_DOMAIN=$(echo "$ETCD_WATCH_KEY" | cut -d "/" -f5)
 UWSGI_SERVERS=($(etcdctl $ETCDCTL_OPTS ls /services/uwsgi))
 UPSTREAMS=()
@@ -31,11 +22,19 @@ case "$ETCD_WATCH_ACTION" in
         if [[ "${#UPSTREAMS[@]}" -gt "0" ]]; then
             mkdir -p /var/www/$NGINX_DOMAIN/static
             UPSTREAM=${UPSTREAMS[$RANDOM % ${#UPSTREAMS[@]}]}
-               ssh ${SSH_OPTS} core@$UPSTREAM "\
-                   docker exec uwsgi \
-                       python /usr/share/webapp/manage.py collectstatic --noinput"
-               rsync --force --delete ${RSYNC_COMMON_OPTS} \
-                   core@$UPSTREAM:/mnt/uwsgi-1/static/ /var/www/$NGINX_DOMAIN/static
+                ssh \
+                    -n \
+                    -o StrictHostKeyChecking=no \
+                    -o UserKnownHostsFile=/dev/null \
+                    core@$UPSTREAM \
+                    "docker exec uwsgi \
+                        python /usr/share/webapp/manage.py collectstatic --noinput"
+                rsync \
+                    --force \
+                    --delete \
+                    -avzP \
+                    --rsh 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' \
+                    core@$UPSTREAM:/mnt/uwsgi-1/static/ /var/www/$NGINX_DOMAIN/static
         fi;;
     delete)
         rm -r /var/www/$NGINX_DOMAIN;;
