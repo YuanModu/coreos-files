@@ -93,5 +93,4 @@ write_files:
       --cert-file /etc/ssl/self-signed/client.pem \
       --key-file /etc/ssl/self-signed/client-key.pem \
       --ca-file /etc/ssl/self-signed/ca.pem"
-
 ...
