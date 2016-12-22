@@ -45,9 +45,7 @@ while read line; do
         fi
     done < $WORKDIR/iplist.txt
     cat $TMP | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-        core@$SERVER_PUBLIC_IP "cat >> ~/.ssh/authorized_keys; \
-        						sed -i '/^\s*$/d' ~/.ssh/authorized_keys; \
-        						sed -i -n 'G; s/\n/&&/; /^\([ -~]*\n\).*\n\1/d; s/\n//; h; P' ~/.ssh/authorized_keys"
+        core@$SERVER_PUBLIC_IP "cat >> ~/.ssh/authorized_keys"
     rm -f $TMP
     echo -e "\e[34mDone\e[0m"; echo
 done < $WORKDIR/iplist.txt
