@@ -89,8 +89,8 @@ write_files:
     owner: root:root
     content: |
       alias etcdctl="etcdctl \
-      --endpoint https://127.0.0.1:2379 \
-      --cert-file /etc/ssl/self-signed/client.pem \
-      --key-file /etc/ssl/self-signed/client-key.pem \
-      --ca-file /etc/ssl/self-signed/ca.pem"
+        --endpoint https://127.0.0.1:2379 \
+        --cert-file /etc/ssl/self-signed/client.pem \
+        --key-file /etc/ssl/self-signed/client-key.pem \
+        --ca-file /etc/ssl/self-signed/ca.pem"
 ...
