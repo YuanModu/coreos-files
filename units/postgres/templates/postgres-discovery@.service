@@ -24,6 +24,7 @@ Environment='ETCDCTL_OPTS=\
 
 ExecStart=/bin/bash -c '{ \
     set -e -o pipefail; \
+    etcdctl $ETCDCTL_OPTS set /services/postgres/%i/domain ""; \
     etcdctl $ETCDCTL_OPTS set /services/postgres/%i/ip ${COREOS_PRIVATE_IPV4}; \
 } > /dev/null'
 
