@@ -24,7 +24,7 @@ Environment='ETCDCTL_OPTS=\
 
 ExecStart=/bin/bash -c '{ \
     set -e -o pipefail; \
-    etcdctl $ETCDCTL_OPTS mkdir /services/nginx/servers; \
+    etcdctl $ETCDCTL_OPTS mkdir /services/nginx/domains; \
     etcdctl $ETCDCTL_OPTS set /services/nginx/worker_processes 1; \
     etcdctl $ETCDCTL_OPTS set /services/nginx/worker_connections 1024; \
     etcdctl $ETCDCTL_OPTS set /services/nginx/sendfile on; \
