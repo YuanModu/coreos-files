@@ -26,8 +26,8 @@ ExecStart=/bin/bash -c '\
     docker build --pull -t yuanmodu/uwsgi $DIR/dockerfiles/build/uwsgi || rm -r $DIR; \
     rm -r -f $DIR'
 
-ExecStop=/bin/bash -c '\
-    docker rmi yuanmodu/uwsgi || true'
+#ExecStop=/bin/bash -c '\
+#    docker rmi yuanmodu/uwsgi || true'
 
 [X-Fleet]
 MachineOf=uwsgi@%i.service
