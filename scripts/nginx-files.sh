@@ -14,9 +14,9 @@ UPSTREAMS=()
 case "$ETCD_WATCH_ACTION" in
     set)
         for SERVER in "${UWSGI_SERVERS[@]##*/}"; do
-            UWSGI_DOMAIN=$(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/server)
+            UWSGI_DOMAIN=$(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/domain)
             if [[ $UWSGI_DOMAIN = $NGINX_DOMAIN ]]; then
-                UPSTREAMS+=($(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/ip))
+                UPSTREAMS+=($(etcdctl $ETCDCTL_OPTS get /services/uwsgi/$SERVER/host))
             fi
         done
         if [[ "${#UPSTREAMS[@]}" -gt "0" ]]; then
