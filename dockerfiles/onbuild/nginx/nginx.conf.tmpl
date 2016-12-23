@@ -31,51 +31,51 @@ http {
     ssl_prefer_server_ciphers               on;
     ssl_ciphers                             AES256+EECDH:AES256+EDH:!aNULL;
 
-    {{range $server := lsdir "/services/nginx/servers/*"}}
-        {{range $dir := lsdir "/services/uwsgi"}}{{$server_key := printf "/services/uwsgi/%s/server" $dir}}{{$server_value := getv $server_key}}
-        {{if eq $server $server_value }}{{$ip_key := printf "/services/uwsgi/%s/ip" $dir}}
-    upstream {{$server}} {
-    	server                              {{getv $ip_key}}:8000;
+    {{range $nginx-domain := lsdir "/services/nginx/domains/*"}}
+    upstream {{$nginx-domain}} {
+        {{range $dir := lsdir "/services/uwsgi"}}{{$uwsgi-domain-key := printf "/services/uwsgi/%s/domain" $dir}}{{$uwsgi-domain := getv $uwsgi-domain-key}}
+        {{if eq $nginx-domain $uwsgi-domain }}{{$uwsgi-host-key := printf "/services/uwsgi/%s/host" $dir}}{{$uwsgi-host := getv $uwsgi-host-key}}
+        server                              {{$uwsgi-host}}:8000;
+        {{end}}
+        {{end}}
     }
-        {{end}}
-        {{end}}
 
     server {
         listen                              80 default_server;
-        server_name                         {{$server}} www.{{$server}};
-        return 301                          https://www.{{$server}}$request_uri;
+        server_name                         {{$nginx-domain}} www.{{$nginx-domain}};
+        return 301                          https://www.{{$nginx-domain}}$request_uri;
     }
 
     server {
         listen                              443 ssl default_server;
-        server_name                         {{$server}};
+        server_name                         {{$nginx-domain}};
 
-        ssl_certificate                     /etc/letsencrypt/live/{{$server}}/fullchain.pem;
-        ssl_certificate_key                 /etc/letsencrypt/live/{{$server}}/privkey.pem;
+        ssl_certificate                     /etc/letsencrypt/live/{{$nginx-domain}}/fullchain.pem;
+        ssl_certificate_key                 /etc/letsencrypt/live/{{$nginx-domain}}/privkey.pem;
 
-        return 301                          https://www.{{$server}}$request_uri;
+        return 301                          https://www.{{$nginx-domain}}$request_uri;
     }
 
     server {
         listen                              443 ssl;
-        server_name                         www.{{$server}};
+        server_name                         www.{{$nginx-domain}};
 
-        ssl_certificate                     /etc/letsencrypt/live/{{$server}}/fullchain.pem;
-        ssl_certificate_key                 /etc/letsencrypt/live/{{$server}}/privkey.pem;
+        ssl_certificate                     /etc/letsencrypt/live/{{$nginx-domain}}/fullchain.pem;
+        ssl_certificate_key                 /etc/letsencrypt/live/{{$nginx-domain}}/privkey.pem;
 
         location ~ /.well-known {
-            alias                           /var/www/{{$server}}/.well-known;
+            alias                           /var/www/{{$nginx-domain}}/.well-known;
         }
 
         location /static {
-            alias                           /var/www/{{$server}}/static;
+            alias                           /var/www/{{$nginx-domain}}/static;
         }
 
         location / {
             uwsgi_ssl_certificate           /etc/nginx/ssl/client.pem;
             uwsgi_ssl_certificate_key       /etc/nginx/ssl/client-key.pem;
             uwsgi_ssl_trusted_certificate   /etc/nginx/ssl/ca.pem;
-            uwsgi_pass                      suwsgi://{{$server}};
+            uwsgi_pass                      suwsgi://{{$nginx-domain}};
             include                         uwsgi_params;
         }
     }

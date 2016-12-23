@@ -24,9 +24,9 @@ Environment='ETCDCTL_OPTS=\
 
 ExecStart=/bin/bash -c '{ \
     set -e -o pipefail; \
-    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/server example.com; \
-    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/db example.com; \
-    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/ip ${COREOS_PRIVATE_IPV4}; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/domain ""; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/database ; \
+    etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/host ${COREOS_PRIVATE_IPV4}; \
     etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/master true; \
     etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/vacuum false; \
     etcdctl $ETCDCTL_OPTS set /services/uwsgi/%i/thunder-lock true; \
