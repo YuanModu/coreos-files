@@ -31,7 +31,7 @@ http {
     ssl_prefer_server_ciphers               on;
     ssl_ciphers                             AES256+EECDH:AES256+EDH:!aNULL;
 
-    {{range $nginx_domain := lsdir "/services/nginx/domains/*"}}
+    {{range $nginx_domain := getvs "/services/nginx/domains/*"}}
     upstream {{$nginx_domain}} {
         {{range $dir := lsdir "/services/uwsgi"}}{{$uwsgi_domain_key := printf "/services/uwsgi/%s/domain" $dir}}{{$uwsgi_domain := getv $uwsgi_domain_key}}
         {{if eq $nginx_domain $uwsgi_domain }}{{$uwsgi_host_key := printf "/services/uwsgi/%s/host" $dir}}{{$uwsgi_host := getv $uwsgi_host_key}}
