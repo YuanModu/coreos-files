@@ -33,7 +33,7 @@ ExecStartPre=/bin/bash -c '\
     rm -r -f $DIR'
 
 ExecStart=/bin/etcdctl $ETCDCTL_OPTS exec-watch --recursive \
-    /services/nginx/servers -- bash /etc/yuan/script/nginx-files.sh
+    /services/nginx/domains -- bash /etc/yuan/script/nginx-files.sh
 
 ExecStop=/bin/kill $MAINPID
 
